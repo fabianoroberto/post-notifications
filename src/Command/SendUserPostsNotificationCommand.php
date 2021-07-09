@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Command;
 
 use App\Service\FetchDataService;
@@ -7,7 +9,6 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
@@ -31,8 +32,7 @@ class SendUserPostsNotificationCommand extends Command
     {
         $this
             ->addOption('limit', 'l', InputArgument::OPTIONAL, 'Number of posts to show', 3)
-            ->addOption('offset', 'o', InputArgument::OPTIONAL, 'Initial position of posts to show', 0)
-        ;
+            ->addOption('offset', 'o', InputArgument::OPTIONAL, 'Initial position of posts to show', 0);
     }
 
     /**
@@ -49,7 +49,7 @@ class SendUserPostsNotificationCommand extends Command
         $limit = $input->getOption('limit');
         $offset = $input->getOption('offset');
 
-        $io->note(sprintf('Command started with option limit: %d and offset: %d', $limit, $offset));
+        $io->note(\sprintf('Command started with option limit: %d and offset: %d', $limit, $offset));
 
         $data = $this->dataService->mapPostsToUser($limit, $offset);
         $this->dataService->sendUserPosts($data);

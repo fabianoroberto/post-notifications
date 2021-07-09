@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service;
 
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
@@ -52,6 +54,8 @@ class FetchDataService
     }
 
     /**
+     * @param mixed $offset
+     *
      * @throws RedirectionExceptionInterface
      * @throws DecodingExceptionInterface
      * @throws ClientExceptionInterface
@@ -73,7 +77,7 @@ class FetchDataService
             if (!\array_key_exists($userId, $toReturn)) {
                 $i = 0;
                 $toReturn[$userId] = [
-                    'user' => $users[$userId]
+                    'user' => $users[$userId],
                 ];
             }
 
