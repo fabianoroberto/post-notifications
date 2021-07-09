@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  mailhog:
+    ports:
+      - "11025:1025"
+      - "18025:8025"
+
+  php-fpm:
+    volumes:
+      - '~/.composer:/home/docker/.composer'

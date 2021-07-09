@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  mailhog:
+    build:
+      context: docker/mailhog
+    labels:
+      com.symfony.server.service-prefix: 'MAILER'
+
+  php-fpm:
+    build:
+      context: docker/php-fpm
+    environment:
+      - APP_ENV=${APP_ENV}
+      - APP_SECRET=${APP_SECRET}
+      - SYMFONY_PROJECT_DEFAULT_ROUTE_URL=
+      - MAILER_DSN=smtp://mailhog:1025
+      #- SYMFONY_DEFAULT_ROUTE_HOST=post-notifications.local
+    volumes:
+      - ./:/var/www
