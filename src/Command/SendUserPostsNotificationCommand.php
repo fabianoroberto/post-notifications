@@ -46,8 +46,8 @@ class SendUserPostsNotificationCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $limit = $input->getOption('limit');
-        $offset = $input->getOption('offset');
+        $limit = \filter_var($input->getOption('limit'), \FILTER_VALIDATE_INT);
+        $offset = \filter_var($input->getOption('offset'), \FILTER_VALIDATE_INT);
 
         $io->note(\sprintf('Command started with option limit: %d and offset: %d', $limit, $offset));
 

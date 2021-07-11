@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface as MailerTransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
@@ -62,7 +63,7 @@ class FetchDataService
      * @throws TransportExceptionInterface
      * @throws ServerExceptionInterface
      */
-    public function mapPostsToUser(int $limit = 3, $offset = 0): array
+    public function mapPostsToUser(int $limit = 3, int $offset = 0): array
     {
         $toReturn = [];
         $users = [];
@@ -71,11 +72,13 @@ class FetchDataService
             $users[$user['id']] = $user;
         }
 
+        $index = 0;
+
         foreach ($this->getPosts() as $post) {
             $userId = $post['userId'];
 
             if (!\array_key_exists($userId, $toReturn)) {
-                $i = 0;
+                $index = 0;
                 $toReturn[$userId] = [
                     'user' => $users[$userId],
                 ];
@@ -87,15 +90,15 @@ class FetchDataService
                 $toReturn[$userId]['posts'] = [];
             }
 
-            if ($i < $offset) {
+            if ($index < $offset) {
                 continue;
             }
 
-            if ($i >= $limit + $offset) {
+            if ($index >= $limit + $offset) {
                 continue;
             }
 
-            $i++;
+            $index++;
 
             $toReturn[$userId]['posts'][$postId] = $post;
         }
@@ -104,14 +107,14 @@ class FetchDataService
     }
 
     /**
-     * @throws \Symfony\Component\Mailer\Exception\TransportExceptionInterface
+     * @throws MailerTransportExceptionInterface
      */
     public function sendUserPosts(array $data)
     {
         $email = (new TemplatedEmail())
             ->to($this->adminEmail)
             ->subject('PostNotifications | Riassunto ultimi post')
-            ->htmlTemplate('emails/password-reset.html.twig')
+            ->htmlTemplate('emails/summary-posts.html.twig')
             ->context([
                 'data' => $data,
                 'name' => $this->adminEmail,
